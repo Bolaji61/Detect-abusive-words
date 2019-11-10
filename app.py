@@ -4,9 +4,9 @@ import nltk
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
+# nltk.download('stopwords')
+# nltk.download('punkt')
+# nltk.download('wordnet')
 
 
 def GetCleanText(text):
@@ -67,13 +67,15 @@ def censor(text):
 # Initialize the app
 app = Flask(__name__)
 
-@app.route('/', methods = ['GET','POST'])
+@app.route('/', methods = ['GET'])
 def home():
     return render_template('index.html')
 
-@app.route('/detect', methods=['GET', 'POST'])
+@app.route('/', methods=['POST'])
 def detect():
-    if request.method == 'POST':
+      """
+      POST Request
+      """
       post = request.json["post"]
       text = GetCleanText(post)
       prediction = censor(text)
