@@ -1,14 +1,15 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect
 import re
 import nltk
-nltk.download("stopwords")
+# nltk.download()
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+from profanityfilter import ProfanityFilter
 # nltk.download('stopwords')
 # nltk.download('punkt')
 # nltk.download('wordnet')
-
+stop_words = stopwords.words("english")
 
 def GetCleanText(text):
   text = text.lower().split()
@@ -49,19 +50,16 @@ def GetCleanText(text):
   text = re.sub(r"@[A-Za-z0-9]+" ," ", text)
   text = re.sub(r'(\w)\1{2,}' ,r'\1\1', text)
   text = re.sub(r"\w(\w)\1{2}" ," ", text)
-
   return text
+  
 text = str()
 lemmatizer = WordNetLemmatizer()
 word_list = nltk.word_tokenize(text)
 lemmatized_output = ' '.join([lemmatizer.lemmatize(w) for w in word_list])
 
-from profanityfilter import ProfanityFilter
 pf = ProfanityFilter()
-
 def censor(text):
-    pf.set_censor("*")
-    censored = pf.censor("text")
+    censored = pf.censor(text)
     return censored
 
 
@@ -70,20 +68,26 @@ app = Flask(__name__)
 
 @app.route('/', methods = ['GET'])
 def home():
-    return render_template('index.html')
+    """
+    GET Request
+    """
+    #give message to user
+    return redirect("https://documenter.getpostman.com/view/7885882/SW18waNq?version=latest")
+
 
 @app.route('/', methods=['POST'])
 def detect():
       """
       POST Request
       """
+      # post = request.get_json(force=True)
       post = request.json["post"]
       text = GetCleanText(post)
       prediction = censor(text)
       return jsonify(summary = prediction)
 
 if  __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)
 
 
 
