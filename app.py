@@ -59,6 +59,7 @@ lemmatized_output = ' '.join([lemmatizer.lemmatize(w) for w in word_list])
 
 pf = ProfanityFilter()
 def censor(text):
+    pf.set_censor("*")
     censored = pf.censor(text)
     return censored
 
@@ -84,7 +85,7 @@ def detect():
       post = request.json["post"]
       text = GetCleanText(post)
       prediction = censor(text)
-      return jsonify(summary = prediction)
+      return jsonify(result = prediction)
 
 if  __name__ == "__main__":
     app.run(debug=True)
